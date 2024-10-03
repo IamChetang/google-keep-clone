@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Notes from "./components/Notes/Notes"
+import Archive from "./components/Archive/Archives"
+import Trash from "./components/Trash/Trashs"
+
 import Header from "./components/Header/Sidenav/Sidenav"
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -21,8 +24,8 @@ function App() {
             <DrawerHeader />
             <Routes>
               <Route path="/" element={<Notes />} />
-              {/* <Route path="/archive" element={<Archive />} />
-              <Route path="/trash" element={<Trash />} /> */}
+              <Route path="/archive" element={<Archive />} />
+              <Route path="/trash" element={<Trash />} />
             </Routes>
           </Box>
         </Box>
