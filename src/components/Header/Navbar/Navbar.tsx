@@ -13,12 +13,22 @@ import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../../assets/google-keep-logo.png';
 import { useLocation } from 'react-router-dom';
 
-const Navbar = styled(AppBar)`
-    z-index: ${props => props.theme.zIndex.drawer + 1};
-    background-color: #fff;
-    box-shadow: inset 0 -1px 0 0 #dadce0;
-`;
+interface NavbarProps {
+    open: boolean;
+}
 
+
+const Navbar = styled(AppBar, {
+    shouldForwardProp: (prop) => prop !== 'open' 
+})<NavbarProps>(({ theme }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: '#fff',
+    boxShadow: 'inset 0 -1px 0 0 #dadce0',
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+}));
 const Heading = styled(Typography)`
     color : #5f6368;
     font-size: 22px;

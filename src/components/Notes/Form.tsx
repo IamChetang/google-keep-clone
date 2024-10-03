@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 
 import {
     Box,
@@ -33,16 +33,11 @@ const note = {
 }
 
 const Form = () => {
-
     const [showTextField, setShowTextField] = useState(false);
     const [addNote, setAddNote] = useState({ ...note, id: uuid() });
-
-    // const { setNotes } = useContext(DataContext);
-    const { addNotes, removeNote } = useStore();
-
+    const { addNotes } = useStore();
     const containerRef: any = useRef();
-
-    const onTextChange = (e) => {
+    const onTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         let changedNote = { ...addNote, [e.target.name]: e.target.value }
         setAddNote(changedNote);
     }

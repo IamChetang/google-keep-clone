@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 
 import { Card, CardActions, CardContent, IconButton, Typography, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -10,17 +10,16 @@ const ArchiveCard = styled(Card)`
     border: 1px solid #e0e0e0;
     border-radius: 8px;
 `;
-
-const Archive = ({ archiveNote }:  {
-    id: string;
-    title: string;
-    text: string;
-  }) => {
-
+interface ArchiveProps {
+    archiveNote:{
+        id: string;
+        title: string;
+        text: string;
+    }
+}
+const Archive: React.FC<ArchiveProps> = ({ archiveNote }) => {
     const [showActions, setShowActions] = useState(false);
-    const { restoreNote,deleteNote } = useStore();
- 
-
+    const { restoreNote, deleteNote } = useStore();
     return (
         <ArchiveCard
             onMouseEnter={() => setShowActions(true)}
@@ -34,7 +33,7 @@ const Archive = ({ archiveNote }:  {
                 <Tooltip title="Unarchive">
                     <IconButton
                         sx={{ visibility: showActions ? 'visible' : 'hidden' }}
-                        onClick={() => restoreNote(archiveNote.id)}
+                        onClick={() => restoreNote(archiveNote.id,true)}
                     >
                         <UnarchiveOutlined fontSize='small' />
                     </IconButton>
@@ -42,7 +41,7 @@ const Archive = ({ archiveNote }:  {
                 <Tooltip title="Delete">
                     <IconButton
                         sx={{ visibility: showActions ? 'visible' : 'hidden' }}
-                        onClick={() => deleteNote(archiveNote.id,false)}
+                        onClick={() => deleteNote(archiveNote.id, false)}
                     >
                         <DeleteOutlineOutlined fontSize='small' />
                     </IconButton>

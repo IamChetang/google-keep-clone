@@ -36,7 +36,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })< DrawerProps &{ open: boolean } >(
-    ({ theme, open }: { theme: Theme; open: boolean }) => ({
+    ({ theme, open }:any) => ({
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
@@ -54,11 +54,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Sidebar = () => {
     const [open, setOpen] = React.useState(false);
-
     const handleDrawer = () => {
         setOpen(prevState => !prevState);
     };
-
     return (
         <Box sx={{ display: 'flex' }}>
             <Navbar open={open} handleDrawer={handleDrawer} />

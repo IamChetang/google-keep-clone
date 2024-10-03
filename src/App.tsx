@@ -6,7 +6,6 @@ import { styled } from '@mui/material/styles';
 import Notes from "./components/Notes/Notes"
 import Archive from "./components/Archive/Archives"
 import Trash from "./components/Trash/Trashs"
-
 import Header from "./components/Header/Sidenav/Sidenav"
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -16,7 +15,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function App() {
   return (
     <>
-      <Box style={{ display: 'flex', width: '100%' }}>
+    <Box style={{ display: 'flex', width: '100%' }}>
       <Router>
         <Header />
         <Box sx={{ display: 'flex', width: '100%' }}>

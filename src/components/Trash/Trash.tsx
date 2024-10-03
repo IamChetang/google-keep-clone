@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 
 import {
     Card,
@@ -20,17 +20,17 @@ const TrashCard = styled(Card)`
     border: 1px solid #e0e0e0;
     border-radius: 8px;
 `;
-
-const Trash = ({ trash }:  {
-    id: string;
-    title: string;
-    text: string;
-  }) => {
-
+interface TrashProps {
+    trash:{
+        id: string;
+        title: string;
+        text: string;
+    }
+}
+const Trash: React.FC<TrashProps>  = ({trash}) => {
     const [showActions, setShowActions] = useState(false);
-    const { restoreNote,permanentlyDeleteNote } = useStore();
-
-
+    const { restoreNote,permanentlyDeleteNote } = useStore()
+    
     return (
         <React.Fragment>
             <TrashCard
@@ -56,13 +56,11 @@ const Trash = ({ trash }:  {
                             sx={{ visibility: showActions ? 'visible' : 'hidden' }}
                             onClick={() => permanentlyDeleteNote(trash.id)}
                         >
-                            <RestoreFromTrashOutlined fontSize='small' />
+                            <DeleteForeverOutlined fontSize='small' />
                         </IconButton>
                     </Tooltip>
                 </CardActions>
             </TrashCard>
-
-           
         </React.Fragment>
     )
 }

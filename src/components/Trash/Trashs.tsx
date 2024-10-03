@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React from 'react';
 
 import Trash from './Trash';
 import {
@@ -6,10 +6,7 @@ import {
     Typography,
     Grid,
     Container,
-    Dialog,
-    DialogTitle,
-    DialogActions,
-    Button
+
 } from '@mui/material';
 import useStore from '../../store/googleStore'
 import { DeleteOutlineOutlined } from '@mui/icons-material';

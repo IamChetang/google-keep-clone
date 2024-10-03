@@ -10,8 +10,8 @@ type StoreState = {
   deletedNotes: Note[], // Deleted notes
   addNotes: (note: Note) => any;
   archiveNote: (id: string) => void;
-  deleteNote: (id: string) => void;
-  restoreNote: (id: string) => void;
+  deleteNote: (id: string,fromNotes:boolean) => void;
+  restoreNote: (id: string,fromArchived:boolean) => void;
   permanentlyDeleteNote: (id: string) => void;
 };
 
@@ -20,8 +20,7 @@ const useStore = create<StoreState>((set) => ({
   archivedNotes: [], 
   deletedNotes: [],
   // addNotes: (newNote) => set((state) => ({ notes: [...state.notes, newNote] })),
-  addNotes: (newNote) => set((state) => {
-
+  addNotes: (newNote) => set((state):any => {
     if(newNote.title || newNote.text){
       return {
         notes: [...state.notes, newNote]
@@ -29,16 +28,16 @@ const useStore = create<StoreState>((set) => ({
     }else{
       return  [...state.notes]
     }
-   
+
   }),
-  archiveNote: (id) => set((state) => {
+  archiveNote: (id) => set((state):any => {
     const noteToArchive = state.notes.find((note) => note.id === id);
     return {
       notes: state.notes.filter((note) => note.id !== id),
       archivedNotes: [...state.archivedNotes, noteToArchive],
     };
   }),
-  deleteNote: (id,fromNotes = true) => set((state) => {
+  deleteNote: (id,fromNotes = true) => set((state):any => {
     const deleteArray = fromNotes ? 'notes' : 'archivedNotes';
     const noteToDelete = state[deleteArray].find((note) => note.id === id);
     return {
@@ -46,7 +45,7 @@ const useStore = create<StoreState>((set) => ({
       deletedNotes: [...state.deletedNotes, noteToDelete],
     };
   }),
-  restoreNote: (id, fromArchived = true) => set((state) => {
+  restoreNote: (id, fromArchived = true) => set((state):any => {
     const restoreArray = fromArchived ? 'archivedNotes' : 'deletedNotes';
     const noteToRestore = state[restoreArray].find((note) => note.id === id);
     return {
