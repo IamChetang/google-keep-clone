@@ -2,17 +2,18 @@ import React from 'react';
 
 import Archive from './Archive';
 
-import useStore from '../../store/googleStore'
-import { Box, Typography, Container, Grid } from '@mui/material';
 
+import { Box, Typography, Container, Grid } from '@mui/material';
+import useFetchNotes from '../../hooks/useFetchNotes';
 import { ArchiveOutlined } from '@mui/icons-material';
 
 const Archives = () => {
-    const { archivedNotes } = useStore();
+   
+    const { notes} = useFetchNotes('archivedNotes');
     return (
         <React.Fragment>
             {
-                archivedNotes.length === 0 ? (
+                notes.length === 0 ? (
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -35,7 +36,7 @@ const Archives = () => {
                         <Container maxWidth="lg">
                             <Grid spacing={2} container>
                                 {
-                                    archivedNotes.map(archiveNote => (
+                                    notes.map(archiveNote => (
                                         <Grid item xs={12} sm={6} md={4} lg={3}>
                                             <Archive archiveNote={archiveNote} />
                                         </Grid>

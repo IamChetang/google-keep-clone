@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 
 import Form from './Form';
 import Note from './Note';
-import useStore from '../../store/googleStore'
 import { Box, Typography, Container, Grid } from '@mui/material';
 import { LightbulbOutlined } from '@mui/icons-material';
+import useFetchNotes from '../../hooks/useFetchNotes';
 const Notes = () => {
-    const { notes } = useStore();
+    const { notes} = useFetchNotes('notes');
     return (
         <React.Fragment>
             <Form />

@@ -8,15 +8,16 @@ import {
     Container,
 
 } from '@mui/material';
-import useStore from '../../store/googleStore'
-import { DeleteOutlineOutlined } from '@mui/icons-material';
 
+import { DeleteOutlineOutlined } from '@mui/icons-material';
+import useFetchNotes from '../../hooks/useFetchNotes';
 const Trashs = () => {
-    const { deletedNotes } = useStore();
+  
+    const { notes} = useFetchNotes('deletedNotes');
     return (
         <React.Fragment>
             {
-                deletedNotes.length === 0 ? (
+                notes.length === 0 ? (
                     <React.Fragment>
                         <Box sx={{
                             display: 'flex',
@@ -41,7 +42,7 @@ const Trashs = () => {
                         <Container maxWidth="lg">
                             <Grid spacing={2} container>
                                 {
-                                    deletedNotes.map(trash => (
+                                    notes.map(trash => (
                                         <Grid item xs={12} sm={6} md={4} lg={3}>
                                             <Trash trash={trash} />
                                         </Grid>
