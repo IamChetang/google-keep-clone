@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid';
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
-import { db,auth } from '../firebase';
+import { db, auth } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 
 type Note = {
@@ -10,14 +10,14 @@ type Note = {
   text: string;
 };
 type StoreState = {
-  addNotes: (note: Note) =>void;
+  addNotes: (note: Note) => void;
   archiveNote: (id: string) => void;
-  deleteNote: (id: string,fromNotes:boolean) => void;
-  restoreNote: (id: string,fromArchived:boolean) => void;
+  deleteNote: (id: string, fromNotes: boolean) => void;
+  restoreNote: (id: string, fromArchived: boolean) => void;
   permanentlyDeleteNote: (id: string) => void;
 
   // for login
-  user: null | { uid: string; email: string };
+  user: null | { uid: string; email: any };
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
@@ -28,9 +28,9 @@ type StoreState = {
 const useStore = create<StoreState>((set) => ({
   addNotes: async (newNote) => {
     if (newNote.title || newNote.text) {
-      const id = newNote.id || uuidv4(); 
+      const id = newNote.id || uuidv4();
       const note = { ...newNote, id };
-      await setDoc(doc(db, 'notes', id), note); 
+      await setDoc(doc(db, 'notes', id), note);
       console.log(auth);
     }
   },
@@ -38,8 +38,8 @@ const useStore = create<StoreState>((set) => ({
     const noteToArchive = await getDoc(doc(db, 'notes', id));
     if (noteToArchive.exists()) {
       const noteData = noteToArchive.data();
-      await setDoc(doc(db, 'archivedNotes', id), noteData); 
-      await deleteDoc(doc(db, 'notes', id)); 
+      await setDoc(doc(db, 'archivedNotes', id), noteData);
+      await deleteDoc(doc(db, 'notes', id));
 
     }
   },
@@ -50,7 +50,7 @@ const useStore = create<StoreState>((set) => ({
       const noteData = noteToDelete.data();
       await setDoc(doc(db, 'deletedNotes', id), noteData); // Move note to 'deletedNotes'
       await deleteDoc(doc(db, collectionName, id)); // Delete from source collection
-   
+
     }
   },
   restoreNote: async (id, fromArchived = true) => {
@@ -58,17 +58,15 @@ const useStore = create<StoreState>((set) => ({
     const noteToRestore = await getDoc(doc(db, collectionName, id));
     if (noteToRestore.exists()) {
       const noteData = noteToRestore.data();
-      await setDoc(doc(db, 'notes', id), noteData); // Restore to 'notes' collection
-      await deleteDoc(doc(db, collectionName, id)); // Remove from source collection
- 
+      await setDoc(doc(db, 'notes', id), noteData); 
+      await deleteDoc(doc(db, collectionName, id)); 
+
     }
   },
   permanentlyDeleteNote: async (id) => {
-    await deleteDoc(doc(db, 'deletedNotes', id)); // Delete from 'deletedNotes'
+    await deleteDoc(doc(db, 'deletedNotes', id)); 
 
   },
-
-  // for login or firebase auth 
   user: null,
   loading: false,
   login: async (email, password) => {

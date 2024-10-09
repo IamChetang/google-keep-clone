@@ -17,18 +17,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function App() {
   return (
     <>
-
-
       <Box style={{ display: 'flex', width: '100%' }}>
         <Router>
-   
-            <Header />
-      
+          <Header />
           <Box sx={{ display: 'flex', width: '100%' }}>
             <Box sx={{ p: 3, width: '100%' }}>
               <DrawerHeader />
               <Routes>
-                <Route path="/login"  element={<Login />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route
                   path="/"
