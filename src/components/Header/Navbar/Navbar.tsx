@@ -9,7 +9,7 @@ import {
     Typography,
     Box,
     InputBase,
-    Avatar 
+    Avatar
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../../assets/google-keep-logo.png';
@@ -61,7 +61,12 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
                     }
                     <Heading>{pathName || 'Keep'}</Heading>
                 </Box>
-                <Box
+                <Box ml={4}
+                    mr="auto"
+                    display="flex"
+                    alignItems="center">
+                </Box>
+                {/* <Box
                     ml={4}
                     mr="auto"
                     display="flex"
@@ -84,12 +89,12 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
                         inputProps={{ 'aria-label': 'search' }}
                         style={{ width: '100%' }}
                     />
-                </Box>
+                </Box> */}
                 <Box display="flex" alignItems="center">
-                 
-
-                  
-                    <Avatar style={{ marginLeft: '12px' }}></Avatar>
+                    {/* <Avatar style={{ marginLeft: '12px',cursor:"pointer"}}></Avatar> */}
+                    <h6 style={{ marginLeft: '12px',cursor:"pointer",color:'black'}}>
+                    Logout
+                    </h6>
                 </Box>
             </Toolbar>
         </Navbar>

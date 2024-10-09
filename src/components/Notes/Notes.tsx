@@ -1,15 +1,30 @@
-import React, { useContext } from 'react';
-
+import React, { useState } from 'react';
+import SelectionBar from '../Selected.tsx'
 import Form from './Form';
 import Note from './Note';
 import { Box, Typography, Container, Grid } from '@mui/material';
 import { LightbulbOutlined } from '@mui/icons-material';
 import useFetchNotes from '../../hooks/useFetchNotes';
+import { NoteType } from '../../type.ts'
 const Notes = () => {
-    const { notes} = useFetchNotes('notes');
+ 
+    let { notes } = useFetchNotes('notes');
+    const [selectedCards, setSelectedCards] = useState<string[]>([]);
+    const toggleSelect = (id: any) => {
+        if (selectedCards.includes(id)) {
+            setSelectedCards(selectedCards.filter((cardId) => cardId !== id));
+        } else {
+            setSelectedCards([...selectedCards, id]);
+        }
+    };
+    function handleDataFromChild(data: string[]) {
+        setSelectedCards(data);
+        
+      }
     return (
         <React.Fragment>
-            <Form />
+            <SelectionBar selectedCards={selectedCards} sendDataToParent={handleDataFromChild}></SelectionBar>
+            <Form  />
             {
                 notes.length === 0 ? (
                     <Box sx={{
@@ -35,11 +50,12 @@ const Notes = () => {
                             <Grid spacing={2} container
                             >
                                 {
-                                    notes.map((note, index) => (
+                                    notes.map((note: NoteType, index: number) => (
                                         <Grid item xs={12} sm={6} md={4} lg={3}
                                             key={index}
                                         >
-                                            <Note note={note} />
+                                            <Note note={note} isSelected={selectedCards.includes(note.id)}
+                                                toggleSelect={toggleSelect} />
                                         </Grid>
                                     ))
                                 }

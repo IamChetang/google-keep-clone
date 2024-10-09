@@ -13,6 +13,7 @@ import { v4 as uuid } from 'uuid';
 
 // import { DataContext } from '../../Context/DataProvider';
 import useStore from '../../store/googleStore';
+
 const Container = styled(Box)`
     display: flex;
     flex-direction: column;
@@ -44,6 +45,7 @@ const Form = () => {
         setShowTextField(false);
         containerRef.current.style.minHeight = '30px';
         setAddNote({ ...note, id: uuid() });
+
     }
     return (
         <ClickAwayListener onClickAway={() => { addNotes(addNote); clickAwaay() }}>

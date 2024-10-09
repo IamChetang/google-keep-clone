@@ -12,10 +12,10 @@ type Note = {
 type StoreState = {
   addNotes: (note: Note) => void;
   archiveNote: (id: string) => void;
+  archiveMultipleNotes: (ids: string[]) => void;
   deleteNote: (id: string, fromNotes: boolean) => void;
   restoreNote: (id: string, fromArchived: boolean) => void;
   permanentlyDeleteNote: (id: string) => void;
-
   // for login
   user: null | { uid: string; email: any };
   loading: boolean;
@@ -34,13 +34,27 @@ const useStore = create<StoreState>((set) => ({
       console.log(auth);
     }
   },
+  archiveMultipleNotes: async (ids) => {
+    try {
+      const promises = ids.map(async (id) => {
+        const noteToArchive = await getDoc(doc(db, 'notes', id));
+        if (noteToArchive.exists()) {
+          const noteData = noteToArchive.data();
+          await setDoc(doc(db, 'archivedNotes', id), noteData);
+          await deleteDoc(doc(db, 'notes', id));
+        }
+      });
+      await Promise.all(promises);
+    } catch (err) {
+      console.error('Error updating multiple documents:', err);
+    }
+  },
   archiveNote: async (id) => {
     const noteToArchive = await getDoc(doc(db, 'notes', id));
     if (noteToArchive.exists()) {
       const noteData = noteToArchive.data();
       await setDoc(doc(db, 'archivedNotes', id), noteData);
       await deleteDoc(doc(db, 'notes', id));
-
     }
   },
   deleteNote: async (id, fromNotes = true) => {
@@ -60,12 +74,10 @@ const useStore = create<StoreState>((set) => ({
       const noteData = noteToRestore.data();
       await setDoc(doc(db, 'notes', id), noteData); 
       await deleteDoc(doc(db, collectionName, id)); 
-
     }
   },
   permanentlyDeleteNote: async (id) => {
     await deleteDoc(doc(db, 'deletedNotes', id)); 
-
   },
   user: null,
   loading: false,

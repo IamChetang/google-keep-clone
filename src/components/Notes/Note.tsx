@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Card, CardActions, CardContent, IconButton, Typography, Tooltip } from '@mui/material';
+import { Card, CardActions, CardContent, IconButton, Typography, Tooltip, Checkbox } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { ArchiveOutlined, DeleteOutlineOutlined } from '@mui/icons-material'
 import useStore from '../../store/googleStore'
@@ -13,20 +13,34 @@ const NoteCard = styled(Card)`
     }
 `;
 interface NotesProps {
-    note:{
+    note: {
         id: string;
         title: string;
         text: string;
-    }
+    },
+    isSelected: boolean,
+    toggleSelect: (id: string) => void
 }
-const Note : React.FC<NotesProps> = ({ note }) => {
+const Note: React.FC<NotesProps> = ({ note, isSelected, toggleSelect }) => {
     const [showActions, setShowActions] = useState(false);
-    const { archiveNote ,deleteNote} = useStore()
+    const { archiveNote, deleteNote } = useStore()
     return (
         <NoteCard
+            onClick={() => toggleSelect(note.id)}
             onMouseEnter={() => setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
+            style={{
+                border: isSelected ? "2px solid black" : "1px solid grey",
+                cursor: "pointer",
+                position: "relative",
+            }}
         >
+            <Checkbox
+                sx={{ visibility: showActions ||isSelected? 'visible' : 'hidden' }}
+                checked={isSelected}
+                onChange={() => toggleSelect(note.id)}
+                style={{ position: "absolute", top: 0, right: 0 }}
+            />
             <CardContent sx={{ wordWrap: "break-word" }}>
                 <Typography>{note.title}</Typography>
                 <Typography>{note.text}</Typography>
@@ -43,7 +57,7 @@ const Note : React.FC<NotesProps> = ({ note }) => {
                 <Tooltip title="Delete">
                     <IconButton
                         sx={{ visibility: showActions ? 'visible' : 'hidden' }}
-                        onClick={() => deleteNote(note.id,true)}
+                        onClick={() => deleteNote(note.id, true)}
                     >
                         <DeleteOutlineOutlined fontSize='small' />
                     </IconButton>
