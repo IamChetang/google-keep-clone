@@ -5,7 +5,7 @@ import Navbar from '../Navbar/Navbar';
 import NavList from './NavList';
 import { DrawerProps } from '@mui/material/Drawer';
 const drawerWidth = 240;
-
+import useAuthStore from '../../../store/googleStore';
 const openedMixin = (theme: Theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -57,14 +57,16 @@ const Sidebar = () => {
     const handleDrawer = () => {
         setOpen(prevState => !prevState);
     };
+    const { user } = useAuthStore();
     return (
-        <Box sx={{ display: 'flex' }}>
+        user ? 
+        <Box sx={{ display: 'flex' }} >
             <Navbar open={open} handleDrawer={handleDrawer} />
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader></DrawerHeader>
                 <NavList open={open} setOpen={setOpen} />
             </Drawer>
-        </Box>
+        </Box> : <></>
     );
 }
 

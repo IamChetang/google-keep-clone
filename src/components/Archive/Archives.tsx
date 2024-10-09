@@ -8,7 +8,6 @@ import useFetchNotes from '../../hooks/useFetchNotes';
 import { ArchiveOutlined } from '@mui/icons-material';
 
 const Archives = () => {
-   
     const { notes} = useFetchNotes('archivedNotes');
     return (
         <React.Fragment>
