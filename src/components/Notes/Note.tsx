@@ -24,12 +24,16 @@ const NoteCard = styled(Card)`
       0 1px 3px 1px rgba(60, 64, 67, 0.149);
   }
 `;
-interface NotesProps {
+
+const Note = ({
+  note,
+  isSelected,
+  toggleSelect,
+}: {
   note: NoteType;
   isSelected: boolean;
   toggleSelect: (id: string) => void;
-}
-const Note: React.FC<NotesProps> = ({ note, isSelected, toggleSelect }) => {
+}) => {
   const [showActions, setShowActions] = useState(false);
   const { archiveNote, deleteNote, togglePinNotes } = useStore();
   return (

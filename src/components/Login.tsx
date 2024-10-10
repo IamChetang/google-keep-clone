@@ -1,40 +1,32 @@
-
 // src/components/Login.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/googleStore';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/googleStore";
 import {
   Box,
   Container,
- 
   Typography,
   TextField,
   Button,
   Divider,
-  Link
+  Link,
 } from "@mui/material";
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { login, loading } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: { preventDefault: () => void; }) => {
+  const handleLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     await login(email, password);
-    navigate('/');
+    navigate("/");
   };
-
-
 
   return (
     <>
-      <Container
-        maxWidth="xs"
-      >
-
+      <Container maxWidth="xs">
         <form onSubmit={handleLogin}>
-
           <Box textAlign="center">
             <Box pt={2}>
               <Typography variant="h4">Login </Typography>
@@ -43,7 +35,13 @@ const Login = () => {
               <Divider />
             </Box>
             <Box pl={2} pr={2} pt={10}>
-              <TextField value={email} onChange={(e) => setEmail(e.target.value)} fullWidth label="Email" variant="outlined" />
+              <TextField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                label="Email"
+                variant="outlined"
+              />
             </Box>
             <Box p={2}>
               <TextField
@@ -56,14 +54,22 @@ const Login = () => {
               />
             </Box>
             <Box textAlign="center" p={2}>
-              <Button type="submit" size="large" variant="contained" color="primary">
-              {loading ? 'Loging up...' : 'Login'}
+              <Button
+                type="submit"
+                size="large"
+                variant="contained"
+                color="primary"
+              >
+                {loading ? "Loging up..." : "Login"}
               </Button>
             </Box>
             <Box textAlign="center" p={2}>
               <Typography variant="body2">
                 {" "}
-                Don't have an account ? <Link onClick={() => navigate('/signup')}>Register here</Link>{" "}
+                Don't have an account ?{" "}
+                <Link onClick={() => navigate("/signup")}>
+                  Register here
+                </Link>{" "}
               </Typography>
             </Box>
           </Box>

@@ -6,7 +6,7 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import { ArchiveOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
-import useStore from "../store/googleStore";
+import useStore from "../../store/googleStore";
 
 interface SelectionBarProps {
   selectedCards: string[];

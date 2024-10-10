@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SelectionBar from "../Selected.tsx";
+import SelectionBar from "../selected/Selected.tsx";
 import Form from "./Form";
 import Note from "./Note";
 import { Box, Typography, Container, Grid } from "@mui/material";
@@ -29,38 +29,53 @@ const Notes = () => {
         sendDataToParent={handleDataFromChild}
       ></SelectionBar>
       <Form />
-      {
-        notes.length === 0 ? (
-          <Box
+      {notes.length === 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "5rem",
+          }}
+        >
+          <LightbulbOutlined
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "5rem",
+              backgroundSize: "120px 120px",
+              height: "120px",
+              margin: "20px",
+              opacity: ".1",
+              width: "120px",
             }}
+          />
+          <Typography
+            sx={{ fontSize: "1.375rem" }}
+            align="center"
+            variant="h6"
+            color="#5f6368"
           >
-            <LightbulbOutlined
-              sx={{
-                backgroundSize: "120px 120px",
-                height: "120px",
-                margin: "20px",
-                opacity: ".1",
-                width: "120px",
-              }}
-            />
-            <Typography
-              sx={{ fontSize: "1.375rem" }}
-              align="center"
-              variant="h6"
-              color="#5f6368"
-            >
-              Notes you add appear here
-            </Typography>
-          </Box>
-        ) : pinnedNotes.length === 0 ? (
+            Notes you add appear here
+          </Typography>
+        </Box>
+      ) : pinnedNotes.length === 0 ? (
+        <Container maxWidth="lg">
+          <Grid spacing={2} container>
+            {notes.map((note: NoteType, index: number) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <Note
+                  note={note}
+                  isSelected={selectedCards.includes(note.id)}
+                  toggleSelect={toggleSelect}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      ) : (
+        <>
           <Container maxWidth="lg">
+            <h5 style={{ fontWeight: "400" }}>Pinned</h5>
             <Grid spacing={2} container>
-              {notes.map((note: NoteType, index: number) => (
+              {pinnedNotes.map((note: NoteType, index: number) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <Note
                     note={note}
@@ -71,56 +86,24 @@ const Notes = () => {
               ))}
             </Grid>
           </Container>
-        ) : (
-          <>
-            <Container maxWidth="lg">
-              <h5 style={{ fontWeight: "400" }}>Pinned</h5>
-              <Grid spacing={2} container>
-                {pinnedNotes.map((note: NoteType, index: number) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                    <Note
-                      note={note}
-                      isSelected={selectedCards.includes(note.id)}
-                      toggleSelect={toggleSelect}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Container>
-            <Container maxWidth="lg">
-              <h5 style={{ fontWeight: "400" }}>
-                {unpinnedNotes.length !== 0 ? "Others" : ""}
-              </h5>
-              <Grid spacing={2} container>
-                {unpinnedNotes.map((note: NoteType, index: number) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                    <Note
-                      note={note}
-                      isSelected={selectedCards.includes(note.id)}
-                      toggleSelect={toggleSelect}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Container>
-          </>
-        )
-
-        // <Container maxWidth="lg">
-        //   <h5 style={{ fontWeight: "400" }}>Pinned</h5>
-        //   <Grid spacing={2} container>
-        //     {notes.map((note: NoteType, index: number) => (
-        //       <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-        //         <Note
-        //           note={note}
-        //           isSelected={selectedCards.includes(note.id)}
-        //           toggleSelect={toggleSelect}
-        //         />
-        //       </Grid>
-        //     ))}
-        //   </Grid>
-        // </Container>
-      }
+          <Container maxWidth="lg">
+            <h5 style={{ fontWeight: "400" }}>
+              {unpinnedNotes.length !== 0 ? "Others" : ""}
+            </h5>
+            <Grid spacing={2} container>
+              {unpinnedNotes.map((note: NoteType, index: number) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                  <Note
+                    note={note}
+                    isSelected={selectedCards.includes(note.id)}
+                    toggleSelect={toggleSelect}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
+        </>
+      )}
     </React.Fragment>
   );
 };

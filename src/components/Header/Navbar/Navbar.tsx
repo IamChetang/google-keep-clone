@@ -1,5 +1,5 @@
 import React from "react";
-
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
@@ -56,31 +56,29 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
           {pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />}
           <Heading>{pathName || "Keep"}</Heading>
         </Box>
-        <Box ml={4} mr="auto" display="flex" alignItems="center"></Box>
-        {/* <Box
-                    ml={4}
-                    mr="auto"
-                    display="flex"
-                    alignItems="center"
-                    style={{
-                        backgroundColor: '#f1f3f4',
-                        padding: '0px 10px',
-                        borderRadius: '8px',
-                        width: '100%',
-                        maxWidth: '500px',
-                    }}
-                >
-                    <IconButton
-                        edge="start"
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                    <InputBase
-                        placeholder="Search"
-                        inputProps={{ 'aria-label': 'search' }}
-                        style={{ width: '100%' }}
-                    />
-                </Box> */}
+        {/* <Box ml={4} mr="auto" display="flex" alignItems="center"></Box> */}
+        <Box
+          ml={4}
+          mr="auto"
+          display="flex"
+          alignItems="center"
+          style={{
+            backgroundColor: "#f1f3f4",
+            padding: "0px 10px",
+            borderRadius: "8px",
+            width: "100%",
+            maxWidth: "500px",
+          }}
+        >
+          <IconButton edge="start">
+            <SearchOutlinedIcon />
+          </IconButton>
+          <InputBase
+            placeholder="Search"
+            inputProps={{ "aria-label": "search" }}
+            style={{ width: "100%" }}
+          />
+        </Box>
         <Box
           display="flex"
           alignItems="center"
