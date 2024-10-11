@@ -15,6 +15,11 @@ import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 
 import useStore from "../../store/googleStore";
 import { NoteType } from "../../type";
+import {
+  useMoveNoteArchive,
+  useMoveNoteToDelete,
+  useTogglePinNotes,
+} from "../../hooks/callingNotesFromfirebase";
 const NoteCard = styled(Card)`
   box-shadow: none;
   border: 1px solid #e0e0e0;
@@ -29,13 +34,35 @@ const Note = ({
   note,
   isSelected,
   toggleSelect,
+  setFetchedNotes,
 }: {
   note: NoteType;
   isSelected: boolean;
   toggleSelect: (id: string) => void;
+  setFetchedNotes: (data: NoteType[]) => void;
 }) => {
   const [showActions, setShowActions] = useState(false);
-  const { archiveNote, deleteNote, togglePinNotes } = useStore();
+  const { mutate: archiveNote } = useMoveNoteArchive({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
+  const { mutate: deleteNote } = useMoveNoteToDelete({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
+  const { mutate: togglePinNotes } = useTogglePinNotes({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
   return (
     <NoteCard
       onMouseEnter={() => setShowActions(true)}
@@ -62,7 +89,9 @@ const Note = ({
         <Tooltip title={note.isPinned ? "Unpin" : "Pin"}>
           <IconButton
             sx={{ visibility: showActions ? "visible" : "hidden" }}
-            onClick={() => togglePinNotes(note.id)}
+            onClick={() => {
+              togglePinNotes(note.id);
+            }}
           >
             <PushPinOutlinedIcon fontSize="small" />
           </IconButton>
@@ -70,7 +99,9 @@ const Note = ({
         <Tooltip title="Archive">
           <IconButton
             sx={{ visibility: showActions ? "visible" : "hidden" }}
-            onClick={() => archiveNote(note.id)}
+            onClick={() => {
+              archiveNote(note.id);
+            }}
           >
             <ArchiveOutlined fontSize="small" />
           </IconButton>
@@ -78,7 +109,9 @@ const Note = ({
         <Tooltip title="Delete">
           <IconButton
             sx={{ visibility: showActions ? "visible" : "hidden" }}
-            onClick={() => deleteNote(note.id, true)}
+            onClick={() => {
+              deleteNote(note.id);
+            }}
           >
             <DeleteOutlineOutlined fontSize="small" />
           </IconButton>

@@ -1,22 +1,27 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
-import ArchiveIcon from "@mui/icons-material/Archive";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-
 import { ArchiveOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
-import useStore from "../../store/googleStore";
-
-interface SelectionBarProps {
-  selectedCards: string[];
-  sendDataToParent: any;
-}
-const SelectionBar: React.FC<SelectionBarProps> = ({
+import { NoteType } from "../../type";
+import { useMultipleMoveNoteArchive } from "../../hooks/callingNotesFromfirebase";
+const SelectionBar = ({
   selectedCards,
   sendDataToParent,
+  setFetchedNotes,
+}: {
+  selectedCards: string[];
+  sendDataToParent: any;
+  setFetchedNotes: (data: NoteType[]) => void;
 }) => {
-  const { archiveMultipleNotes } = useStore();
+  const { mutate: archiveMultipleNotes } = useMultipleMoveNoteArchive({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+        sendDataToParent([]);
+      }
+    },
+  });
   return (
     <React.Fragment>
       {selectedCards.length !== 0 ? (

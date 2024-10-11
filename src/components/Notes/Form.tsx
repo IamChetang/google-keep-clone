@@ -13,6 +13,8 @@ import { v4 as uuid } from "uuid";
 
 // import { DataContext } from '../../Context/DataProvider';
 import useStore from "../../store/googleStore";
+import { useAddNotes } from "../../hooks/callingNotesFromfirebase";
+import { NoteType } from "../../type";
 
 const Container = styled(Box)`
   display: flex;
@@ -33,10 +35,13 @@ const note = {
   isPinned: false,
 };
 
-const Form = () => {
+const Form = ({
+  setFetchedNotes,
+}: {
+  setFetchedNotes: (data: NoteType[]) => void;
+}) => {
   const [showTextField, setShowTextField] = useState(false);
   const [addNote, setAddNote] = useState({ ...note, id: uuid() });
-  const { addNotes } = useStore();
   const containerRef: any = useRef();
   const onTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,6 +54,13 @@ const Form = () => {
     containerRef.current.style.minHeight = "30px";
     setAddNote({ ...note, id: uuid() });
   }
+  const { mutate: addNotes } = useAddNotes({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
   return (
     <ClickAwayListener
       onClickAway={() => {

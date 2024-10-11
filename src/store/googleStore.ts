@@ -19,7 +19,7 @@ type StoreState = {
   restoreNote: (id: string, fromArchived: boolean) => void;
   permanentlyDeleteNote: (id: string) => void;
   // for login
-  user: null | { uid: string; email: any };
+  user: any;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
@@ -44,7 +44,6 @@ const useStore = create<StoreState>((set) => ({
       const id = newNote.id || uuidv4();
       const note = { ...newNote, id };
       await setDoc(doc(db, "notes", id), note);
-      console.log(auth);
     }
   },
   archiveMultipleNotes: async (ids) => {
@@ -107,6 +106,8 @@ const useStore = create<StoreState>((set) => ({
           email: userCredential.user.email,
         },
       });
+      localStorage.setItem("id", userCredential.user.uid);
+      localStorage.setItem("email", userCredential.user.email);
     } catch (error) {
       console.error("Login Error:", error);
       alert(error);
@@ -128,6 +129,8 @@ const useStore = create<StoreState>((set) => ({
           email: userCredential.user.email,
         },
       });
+      localStorage.setItem("id", userCredential.user.uid);
+      localStorage.setItem("email", userCredential.user.email);
     } catch (error) {
       console.error("Sign Up Error:", error);
     } finally {
@@ -137,19 +140,27 @@ const useStore = create<StoreState>((set) => ({
   logout: async () => {
     try {
       await signOut(auth);
+      localStorage.removeItem("id");
+      localStorage.removeItem("email");
+
       set({ user: null });
     } catch (error) {
       console.error("Logout Error:", error);
     }
   },
-  checkAuthState: () => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        set({ user: { uid: user.uid, email: user.email } });
-      } else {
-        set({ user: null });
-      }
-    });
+  checkAuthState: async () => {
+    if (localStorage.getItem("id")) {
+      console.log('ghvgh');
+      
+      set({
+        user: {
+          uid: localStorage.getItem("id"),
+          email: localStorage.getItem("email"),
+        },
+      });
+    } else {
+      set({ user: null });
+    }
   },
 }));
 

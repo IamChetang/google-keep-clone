@@ -1,14 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectionBar from "../selected/Selected.tsx";
 import Form from "./Form";
 import Note from "./Note";
 import { Box, Typography, Container, Grid } from "@mui/material";
 import { LightbulbOutlined } from "@mui/icons-material";
-import useFetchNotes from "../../hooks/useFetchNotes";
 import { NoteType } from "../../type.ts";
+import { useCreateInputOption } from "../../hooks/callingNotesFromfirebase.ts";
+import { useLocation } from "react-router-dom";
+
 const Notes = () => {
-  let { notes } = useFetchNotes("notes");
+  const [fetchedNotes, setFetchedNotes] = useState<NoteType[]>([]);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const params: any = {};
+    for (let [key, value] of searchParams.entries()) {
+      params[key] = value;
+    }
+
+    fetchNotes({ collectionName: "notes", searchTerm: params.search });
+  }, [location.search]);
+
+  const { mutate: fetchNotes } = useCreateInputOption({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
+  useEffect(() => {
+    fetchNotes({ collectionName: "notes" });
+  }, []);
+
   const toggleSelect = (id: any) => {
     if (selectedCards.includes(id)) {
       setSelectedCards(selectedCards.filter((cardId) => cardId !== id));
@@ -19,17 +44,23 @@ const Notes = () => {
   function handleDataFromChild(data: string[]) {
     setSelectedCards(data);
   }
-  const pinnedNotes = notes.filter((note) => note.isPinned);
-  const unpinnedNotes = notes.filter((note) => !note.isPinned);
+
+  const pinnedNotes = fetchedNotes
+    ? fetchedNotes.filter((note) => note.isPinned)
+    : [];
+  const unpinnedNotes = fetchedNotes
+    ? fetchedNotes.filter((note) => !note.isPinned)
+    : [];
 
   return (
     <React.Fragment>
       <SelectionBar
         selectedCards={selectedCards}
         sendDataToParent={handleDataFromChild}
+        setFetchedNotes={setFetchedNotes}
       ></SelectionBar>
-      <Form />
-      {notes.length === 0 ? (
+      <Form setFetchedNotes={setFetchedNotes} />
+      {fetchedNotes.length === 0 ? (
         <Box
           sx={{
             display: "flex",
@@ -59,12 +90,13 @@ const Notes = () => {
       ) : pinnedNotes.length === 0 ? (
         <Container maxWidth="lg">
           <Grid spacing={2} container>
-            {notes.map((note: NoteType, index: number) => (
+            {fetchedNotes.map((note: NoteType, index: number) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <Note
                   note={note}
                   isSelected={selectedCards.includes(note.id)}
                   toggleSelect={toggleSelect}
+                  setFetchedNotes={setFetchedNotes}
                 />
               </Grid>
             ))}
@@ -81,6 +113,7 @@ const Notes = () => {
                     note={note}
                     isSelected={selectedCards.includes(note.id)}
                     toggleSelect={toggleSelect}
+                    setFetchedNotes={setFetchedNotes}
                   />
                 </Grid>
               ))}
@@ -97,6 +130,7 @@ const Notes = () => {
                     note={note}
                     isSelected={selectedCards.includes(note.id)}
                     toggleSelect={toggleSelect}
+                    setFetchedNotes={setFetchedNotes}
                   />
                 </Grid>
               ))}

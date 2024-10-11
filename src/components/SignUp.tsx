@@ -1,33 +1,36 @@
 // src/components/SignUp.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/googleStore';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/googleStore";
 import {
   Box,
   Container,
-
   Typography,
   TextField,
   Button,
   Divider,
-  Link
+  Link,
 } from "@mui/material";
+import useStore from "../store/googleStore.ts";
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { signUp, loading } = useAuthStore();
   const navigate = useNavigate();
-  const handleSignUp = async (e: { preventDefault: () => void; }) => {
+  const { checkAuthState } = useStore();
+  const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     await signUp(email, password);
-    navigate('/');
+    navigate("/");
   };
+  useEffect(() => {
+    checkAuthState();
+    navigate("/");
+  }, []);
 
   return (
     <>
-      <Container
-        maxWidth="xs"
-      >
+      <Container maxWidth="xs">
         <form onSubmit={handleSignUp}>
           <Box textAlign="center">
             <Box pt={2}>
@@ -37,7 +40,13 @@ const SignUp = () => {
               <Divider />
             </Box>
             <Box pl={2} pr={2} pt={10}>
-              <TextField value={email} onChange={(e) => setEmail(e.target.value)} fullWidth label="Email" variant="outlined" />
+              <TextField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                label="Email"
+                variant="outlined"
+              />
             </Box>
             <Box p={2}>
               <TextField
@@ -50,15 +59,19 @@ const SignUp = () => {
               />
             </Box>
             <Box textAlign="center" p={2}>
-              <Button type="submit" size="large" variant="contained" color="primary">
-              {loading ? 'Signing up...' : 'Sign Up'}
+              <Button
+                type="submit"
+                size="large"
+                variant="contained"
+                color="primary"
+              >
+                {loading ? "Signing up..." : "Sign Up"}
               </Button>
             </Box>
           </Box>
         </form>
       </Container>
     </>
-   
   );
 };
 

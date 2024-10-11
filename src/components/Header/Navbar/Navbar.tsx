@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -14,6 +14,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import logo from "../../../assets/google-keep-logo.png";
 import { useLocation } from "react-router-dom";
+import useStore from "../../../store/googleStore";
 
 interface NavbarProps {
   open: boolean;
@@ -43,9 +44,19 @@ type HeaderProps = {
   open: boolean;
 };
 const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
+  const [searchText, setSearchText] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { logout } = useStore();
   const location = useLocation();
   const pathName = capitalize(location.pathname.substring(1));
   const navigate = useNavigate();
+  const onTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    let changedNote = e.target.value;
+    setSearchText(changedNote);
+    setSearchParams({ search: changedNote });
+  };
   return (
     <Navbar open={open}>
       <Toolbar>
@@ -74,16 +85,18 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
             <SearchOutlinedIcon />
           </IconButton>
           <InputBase
-            placeholder="Search"
+            placeholder="Search by title"
             inputProps={{ "aria-label": "search" }}
             style={{ width: "100%" }}
+            value={searchText}
+            onChange={(e) => onTextChange(e)}
           />
         </Box>
         <Box
           display="flex"
           alignItems="center"
           onClick={() => {
-            navigate("/login"), window.location.reload();
+            navigate("/login"), logout();
           }}
         >
           {/* <Avatar style={{ marginLeft: '12px',cursor:"pointer"}}></Avatar> */}
