@@ -6,7 +6,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
 } from "firebase/auth";
 import { NoteType } from "../type";
 
@@ -107,7 +106,9 @@ const useStore = create<StoreState>((set) => ({
         },
       });
       localStorage.setItem("id", userCredential.user.uid);
-      localStorage.setItem("email", userCredential.user.email);
+      if (userCredential.user.email) {
+        localStorage.setItem("email", userCredential.user.email);
+      }
     } catch (error) {
       console.error("Login Error:", error);
       alert(error);
@@ -130,7 +131,9 @@ const useStore = create<StoreState>((set) => ({
         },
       });
       localStorage.setItem("id", userCredential.user.uid);
-      localStorage.setItem("email", userCredential.user.email);
+      if (userCredential.user.email) {
+        localStorage.setItem("email", userCredential.user.email);
+      }
     } catch (error) {
       console.error("Sign Up Error:", error);
     } finally {

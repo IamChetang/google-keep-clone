@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { styled } from "@mui/material/styles";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -45,7 +45,7 @@ type HeaderProps = {
 };
 const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
   const [searchText, setSearchText] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+
   const { logout } = useStore();
   const location = useLocation();
   const pathName = capitalize(location.pathname.substring(1));
@@ -55,7 +55,6 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
   ) => {
     let changedNote = e.target.value;
     setSearchText(changedNote);
-    setSearchParams({ search: changedNote });
   };
   return (
     <Navbar open={open}>
@@ -67,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
           {pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />}
           <Heading>{pathName || "Keep"}</Heading>
         </Box>
-        {/* <Box ml={4} mr="auto" display="flex" alignItems="center"></Box> */}
+
         <Box
           ml={4}
           mr="auto"

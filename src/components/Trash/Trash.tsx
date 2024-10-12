@@ -15,7 +15,7 @@ import {
   DeleteForeverOutlined,
   RestoreFromTrashOutlined,
 } from "@mui/icons-material";
-import useStore from "../../store/googleStore";
+
 import {
   useMoveNoteArchive,
   usePermanentlyDeleteNote,

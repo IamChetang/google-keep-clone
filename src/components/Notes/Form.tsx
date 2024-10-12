@@ -38,7 +38,7 @@ const Form = ({
   setFetchedNotes: (data: NoteType[]) => void;
 }) => {
   const [showTextField, setShowTextField] = useState(false);
-  const [addNote, setAddNote] = useState({ ...note, id: uuid() });
+  const [addNote, setAddNote] = useState<any>({ ...note, id: uuid() });
   const containerRef: any = useRef();
   const onTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

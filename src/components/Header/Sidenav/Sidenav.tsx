@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled, Theme } from "@mui/material/styles";
-import { Box, Link, Drawer as MuiDrawer, Typography } from "@mui/material";
+import { Box, Drawer as MuiDrawer } from "@mui/material";
 import Navbar from "../Navbar/Navbar";
 import NavList from "./NavList";
 import { DrawerProps } from "@mui/material/Drawer";

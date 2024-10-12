@@ -1,5 +1,5 @@
 // src/components/Login.js
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/googleStore";
 import {
@@ -11,13 +11,13 @@ import {
   Divider,
   Link,
 } from "@mui/material";
-import useStore from "../store/googleStore.ts";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading } = useAuthStore();
   const navigate = useNavigate();
-  const { checkAuthState } = useStore();
+
   const handleLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     await login(email, password);

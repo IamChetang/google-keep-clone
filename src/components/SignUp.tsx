@@ -1,5 +1,5 @@
 // src/components/SignUp.js
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/googleStore";
 import {
@@ -9,15 +9,14 @@ import {
   TextField,
   Button,
   Divider,
-  Link,
 } from "@mui/material";
-import useStore from "../store/googleStore.ts";
+
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signUp, loading } = useAuthStore();
   const navigate = useNavigate();
-  const { checkAuthState } = useStore();
+
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     await signUp(email, password);

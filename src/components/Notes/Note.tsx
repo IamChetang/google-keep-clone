@@ -10,7 +10,6 @@ import {
   Checkbox,
   Modal,
   Grid,
-  Button,
   Box,
   Chip,
   Menu,
@@ -220,33 +219,28 @@ const Note = ({
             Select a Background Color
           </Typography>
           <Grid container spacing={2} sx={{ marginTop: "10px" }}>
-            {colors.map(
-              (
-                color: string | number | boolean | null | undefined,
-                index: React.Key | null | undefined
-              ) => (
-                <Grid item key={index}>
-                  <div
-                    style={{
-                      border: index === 0 ? "1px solid grey" : "",
-                      backgroundColor: color,
-                      width: "2rem",
-                      height: "2rem",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      handleClose();
-                      changeBackground({
-                        id: note.id,
-                        collectionName: "notes",
-                        background: color,
-                      });
-                    }}
-                  ></div>
-                </Grid>
-              )
-            )}
+            {colors.map((color: any, index: React.Key | null | undefined) => (
+              <Grid item key={index}>
+                <div
+                  style={{
+                    border: index === 0 ? "1px solid grey" : "",
+                    backgroundColor: color,
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleClose();
+                    changeBackground({
+                      id: note.id,
+                      collectionName: "notes",
+                      background: color,
+                    });
+                  }}
+                ></div>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       </Modal>

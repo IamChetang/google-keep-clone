@@ -1,7 +1,6 @@
 import { db } from "../firebase"; // Ensure Firebase is initialized in this file
 import {
   collection,
-  addDoc,
   getDocs,
   query,
   where,

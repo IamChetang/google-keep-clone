@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Archive from "./Archive";
 
 import { Box, Typography, Container, Grid } from "@mui/material";
-import useFetchNotes from "../../hooks/useFetchNotes";
 import { ArchiveOutlined } from "@mui/icons-material";
 import { NoteType } from "../../type";
 import { useCreateInputOption } from "../../hooks/callingNotesFromfirebase";
