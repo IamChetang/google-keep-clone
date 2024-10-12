@@ -27,7 +27,7 @@ const SelectionBar = ({
       {selectedCards.length !== 0 ? (
         <AppBar
           color="default"
-          style={{ zIndex: "2000", position: "absolute", top: 0, left: 0 }}
+          style={{ zIndex: "2000", position: "fixed", top: 0, left: 0 }}
         >
           <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="close">

@@ -12,7 +12,6 @@ const Notes = () => {
   const [fetchedNotes, setFetchedNotes] = useState<NoteType[]>([]);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const location = useLocation();
-
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const params: any = {};

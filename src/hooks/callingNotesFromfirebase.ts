@@ -53,16 +53,36 @@ export const useCreateInputOption = (
   });
 };
 
-// Archive query function
-const moveNoteArchive = async (id: string) => {
+// Archive query function and unarchive query function
+const moveNoteArchive = async (payload: {
+  id: string;
+  collectionName: string;
+  action: string;
+}) => {
   try {
-    const noteToArchive = await getDoc(doc(db, "notes", id));
-    if (noteToArchive.exists()) {
-      const noteData = noteToArchive.data();
-      await setDoc(doc(db, "archivedNotes", id), noteData);
-      await deleteDoc(doc(db, "notes", id));
+    if (payload.action === "archive") {
+      const noteToArchive = await getDoc(
+        doc(db, payload.collectionName, payload.id)
+      );
+      if (noteToArchive.exists()) {
+        const noteData = noteToArchive.data();
+        await setDoc(doc(db, "archivedNotes", payload.id), noteData);
+        await deleteDoc(doc(db, "notes", payload.id));
+      }
     }
-    let q = collection(db, "notes");
+
+    if (payload.action === "unarchive") {
+      const noteToRestore = await getDoc(
+        doc(db, payload.collectionName, payload.id)
+      );
+      if (noteToRestore.exists()) {
+        const noteData = noteToRestore.data();
+        await setDoc(doc(db, "notes", payload.id), noteData);
+        await deleteDoc(doc(db, payload.collectionName, payload.id));
+      }
+    }
+
+    let q = collection(db, payload.collectionName);
     let querySnapshot = await getDocs(q);
     const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -85,16 +105,17 @@ export const useMoveNoteArchive = (
   });
 };
 // move to delete from notes and archive section
-const moveNoteToDelete = async (id: string, fromNotes: boolean = true) => {
+const moveNoteToDelete = async (payload: {
+  id: string;
+  fromNotes: boolean;
+}) => {
   try {
-    const collectionName = fromNotes ? "notes" : "archivedNotes";
-    const noteToDelete = await getDoc(doc(db, collectionName, id));
+    const collectionName = payload.fromNotes ? "notes" : "archivedNotes";
+    const noteToDelete = await getDoc(doc(db, collectionName, payload.id));
     if (noteToDelete.exists()) {
       const noteData = noteToDelete.data();
-      console.log(noteData, collectionName);
-
-      await setDoc(doc(db, "deletedNotes", id), noteData);
-      await deleteDoc(doc(db, collectionName, id));
+      await setDoc(doc(db, "deletedNotes", payload.id), noteData);
+      await deleteDoc(doc(db, collectionName, payload.id));
     }
     let q = collection(db, collectionName);
     let querySnapshot = await getDocs(q);
@@ -211,6 +232,74 @@ export const useMultipleMoveNoteArchive = (
 ) => {
   return useMutation({
     mutationFn: moveMultipleNoteArchive,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+// permananely delete a note
+const permanentlyDeleteNote = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, "deletedNotes", id));
+    let q = collection(db, "deletedNotes");
+    let querySnapshot = await getDocs(q);
+    const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as NoteType[];
+    return fetchedNotes;
+  } catch (error) {}
+};
+
+export const usePermanentlyDeleteNote = (
+  args: { onSuccess?: (data: NoteType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: permanentlyDeleteNote,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+
+// background color change
+
+const changeBackGroundColor = async (payload: {
+  id: string;
+  collectionName: string;
+  background: string | number | boolean | null | undefined;
+}) => {
+  try {
+    const noteToArchive = await getDoc(
+      doc(db, payload.collectionName, payload.id)
+    );
+    if (noteToArchive.exists()) {
+      const noteData = noteToArchive.data();
+      console.log(noteData);
+      await updateDoc(doc(db, payload.collectionName, payload.id), {
+        ...noteData,
+        background: payload.background,
+      });
+    }
+    let q = collection(db, payload.collectionName);
+    let querySnapshot = await getDocs(q);
+    const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as NoteType[];
+    return fetchedNotes;
+  } catch (error) {}
+};
+
+export const useChangeBackGroundColor = (
+  args: { onSuccess?: (data: NoteType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: changeBackGroundColor,
     onSuccess: (data: any) => {
       if (args.onSuccess) {
         args.onSuccess(data);

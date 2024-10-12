@@ -142,16 +142,13 @@ const useStore = create<StoreState>((set) => ({
       await signOut(auth);
       localStorage.removeItem("id");
       localStorage.removeItem("email");
-
       set({ user: null });
     } catch (error) {
       console.error("Logout Error:", error);
     }
   },
   checkAuthState: async () => {
-    if (localStorage.getItem("id")) {
-      console.log('ghvgh');
-      
+    if (localStorage.getItem("id") && localStorage.getItem("email")) {
       set({
         user: {
           uid: localStorage.getItem("id"),
