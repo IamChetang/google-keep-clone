@@ -1,4 +1,4 @@
-import { db } from "../firebase"; // Ensure Firebase is initialized in this file
+import { db } from "../firebase";
 import {
   collection,
   getDocs,
@@ -10,7 +10,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { useMutation } from "@tanstack/react-query"; // Assuming you are using react-query for mutation
+import { useMutation } from "@tanstack/react-query";
 import { NoteType } from "../type";
 import { v4 as uuidv4 } from "uuid";
 const createInputOption = async (payload: {
@@ -19,7 +19,6 @@ const createInputOption = async (payload: {
 }) => {
   try {
     const { collectionName, searchTerm } = payload;
-    console.log(searchTerm);
     let q;
     if (searchTerm) {
       q = query(
@@ -332,27 +331,48 @@ const addLabelToNotes = async (payload: {
   label: string;
 }) => {
   try {
-    const noteToArchive = await getDoc(
-      doc(db, payload.collectionName, payload.id)
+    const id = uuidv4();
+    const labelObject = { id: id, label: payload.label };
+    const querySnapshotLabel = await getDocs(
+      query(collection(db, "labels"), where("label", "==", payload.label))
     );
-    if (noteToArchive.exists()) {
-      const noteData = noteToArchive.data();
-      await updateDoc(doc(db, payload.collectionName, payload.id), {
-        ...noteData,
-        labels:
-          noteData.labels && noteData.labels.includes(payload.label)
-            ? noteData.labels // If the label already exists, do nothing
-            : [...(noteData.labels || []), payload.label], // Otherwise, add the new label
-      });
+    const fetchedLabels: { label: string; id: string }[] =
+      querySnapshotLabel.docs.map((doc) => ({
+        id: doc.id,
+        label: doc.data().label,
+      })) as { label: string; id: string }[];
+
+    if (fetchedLabels.length === 0) {
+      await setDoc(doc(db, "labels", id), labelObject);
+      const getLabel = await getDoc(doc(db, "labels", id));
+      const noteToArchive = await getDoc(
+        doc(db, payload.collectionName, payload.id)
+      );
+      if (noteToArchive.exists()) {
+        const noteData = noteToArchive.data();
+        await updateDoc(doc(db, payload.collectionName, payload.id), {
+          ...noteData,
+          labels:
+            noteData.labels && noteData.labels.includes(payload.label)
+              ? noteData.labels // If the label already exists, do nothing
+              : [...(noteData.labels || []), getLabel.data()], // Otherwise, add the new label
+        });
+      }
+    } else {
+      throw new Error("Found a label with same name");
     }
+
     let q = collection(db, payload.collectionName);
     let querySnapshot = await getDocs(q);
     const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as NoteType[];
+
     return fetchedNotes;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const useAddLabelToNotes = (
@@ -360,6 +380,31 @@ export const useAddLabelToNotes = (
 ) => {
   return useMutation({
     mutationFn: addLabelToNotes,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+type labelType = { label: string; id: string };
+const getLabels = async () => {
+  try {
+    let q = collection(db, "labels");
+    let querySnapshot = await getDocs(q);
+    const fetchedLabels: labelType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as labelType[];
+    return fetchedLabels;
+  } catch (error) {}
+};
+
+export const useGetLabels = (
+  args: { onSuccess?: (data: labelType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: getLabels,
     onSuccess: (data: any) => {
       if (args.onSuccess) {
         args.onSuccess(data);

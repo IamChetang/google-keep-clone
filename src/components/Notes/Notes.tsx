@@ -18,7 +18,6 @@ const Notes = () => {
     for (let [key, value] of searchParams.entries()) {
       params[key] = value;
     }
-
     fetchNotes({ collectionName: "notes", searchTerm: params.search });
   }, [location.search]);
 
@@ -29,6 +28,7 @@ const Notes = () => {
       }
     },
   });
+
   useEffect(() => {
     fetchNotes({ collectionName: "notes" });
   }, []);

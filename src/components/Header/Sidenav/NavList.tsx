@@ -37,7 +37,6 @@ const NavList: React.FC<NavProps> = ({ open, setOpen }) => {
   const classes = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
-
   const sidebarLinks = [
     {
       id: 1,

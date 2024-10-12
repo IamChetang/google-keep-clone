@@ -139,13 +139,15 @@ const Note = ({
         <Typography>{note.text}</Typography>
         {note?.labels ? (
           <div style={{ marginTop: "0.5rem" }}>
-            {note.labels.map((label: string[], index: number) => (
-              <Chip
-                key={index}
-                label={label}
-                style={{ marginRight: "0.5rem" }}
-              />
-            ))}
+            {note.labels.map(
+              (label: { id: string; label: string }, index: number) => (
+                <Chip
+                  key={index}
+                  label={label.label}
+                  style={{ marginRight: "0.5rem" }}
+                />
+              )
+            )}
           </div>
         ) : (
           <></>
