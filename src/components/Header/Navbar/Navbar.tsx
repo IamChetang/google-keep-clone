@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -45,6 +45,7 @@ type HeaderProps = {
 };
 const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
   const [searchText, setSearchText] = useState("");
+  const [, setSearchParams] = useSearchParams();
 
   const { logout } = useStore();
   const location = useLocation();
@@ -55,6 +56,7 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
   ) => {
     let changedNote = e.target.value;
     setSearchText(changedNote);
+    setSearchParams({ search: changedNote });
   };
   return (
     <Navbar open={open}>

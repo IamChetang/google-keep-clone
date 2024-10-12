@@ -25,6 +25,7 @@ const Notes = () => {
   const { mutate: fetchNotes } = useCreateInputOption({
     onSuccess: (data) => {
       if (data) {
+      
         setFetchedNotes(data);
       }
     },

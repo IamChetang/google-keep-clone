@@ -19,6 +19,7 @@ const createInputOption = async (payload: {
 }) => {
   try {
     const { collectionName, searchTerm } = payload;
+    console.log(searchTerm);
     let q;
     if (searchTerm) {
       q = query(
@@ -34,7 +35,7 @@ const createInputOption = async (payload: {
       id: doc.id,
       ...doc.data(),
     })) as NoteType[];
-
+    console.log(fetchedNotes);
     return fetchedNotes;
   } catch (error) {}
 };
