@@ -206,17 +206,36 @@ export const useTogglePinNotes = (
   });
 };
 // move multile otes to archives
-const moveMultipleNoteArchive = async (ids: string[]) => {
+const moveMultipleNoteArchive = async (payload: {
+  ids: string[];
+  moveFrom: string;
+  moveTo: string;
+  action: string;
+}) => {
   try {
-    const promises = ids.map(async (id) => {
-      const noteToArchive = await getDoc(doc(db, "notes", id));
-      if (noteToArchive.exists()) {
-        const noteData = noteToArchive.data();
-        await setDoc(doc(db, "archivedNotes", id), noteData);
-        await deleteDoc(doc(db, "notes", id));
-      }
-    });
-    await Promise.all(promises);
+    if (payload.action === "archive") {
+      const promises = payload.ids.map(async (id) => {
+        const noteToArchive = await getDoc(doc(db, payload.moveFrom, id));
+        if (noteToArchive.exists()) {
+          const noteData = noteToArchive.data();
+          await setDoc(doc(db, payload.moveTo, id), noteData);
+          await deleteDoc(doc(db, payload.moveFrom, id));
+        }
+      });
+      await Promise.all(promises);
+    }
+    if (payload.action === "delete") {
+      const promises = payload.ids.map(async (id) => {
+        const noteToDelete = await getDoc(doc(db, payload.moveFrom, id));
+        if (noteToDelete.exists()) {
+          const noteData = noteToDelete.data();
+          await setDoc(doc(db, payload.moveTo, id), noteData); // Move note to 'deletedNotes'
+          await deleteDoc(doc(db, payload.moveFrom, id)); // Delete from source collection
+        }
+      });
+      await Promise.all(promises);
+    }
+
     let q = collection(db, "notes");
     let querySnapshot = await getDocs(q);
     const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({

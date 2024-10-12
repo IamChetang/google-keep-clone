@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { ArchiveOutlined } from "@mui/icons-material";
+import { ArchiveOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
 import { NoteType } from "../../type";
 import { useMultipleMoveNoteArchive } from "../../hooks/callingNotesFromfirebase";
 const SelectionBar = ({
@@ -39,10 +39,28 @@ const SelectionBar = ({
 
             <IconButton color="inherit" aria-label="archive">
               <ArchiveOutlined
-                onClick={() => archiveMultipleNotes(selectedCards)}
+                onClick={() =>
+                  archiveMultipleNotes({
+                    ids: selectedCards,
+                    moveFrom: "notes",
+                    moveTo: "deletedNotes",
+                    action: "archive",
+                  })
+                }
               />
             </IconButton>
-
+            <IconButton color="inherit" aria-label="archive">
+              <DeleteOutlineOutlined
+                onClick={() =>
+                  archiveMultipleNotes({
+                    ids: selectedCards,
+                    moveFrom: "notes",
+                    moveTo: "deletedNotes",
+                    action: "delete",
+                  })
+                }
+              />
+            </IconButton>
             <IconButton color="inherit" aria-label="more options">
               <MoreVertIcon />
             </IconButton>
