@@ -6,8 +6,18 @@ import { Box, Typography, Grid, Container } from "@mui/material";
 import { DeleteOutlineOutlined } from "@mui/icons-material";
 import { NoteType } from "../../type";
 import { useCreateInputOption } from "../../hooks/callingNotesFromfirebase";
+import { useLocation } from "react-router-dom";
 const Trashs = () => {
   const [fetchedNotes, setFetchedNotes] = useState<NoteType[]>([]);
+  const location = useLocation();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const params: any = {};
+    for (let [key, value] of searchParams.entries()) {
+      params[key] = value;
+    }
+    fetchNotes({ collectionName: "deletedNotes", searchTerm: params.search });
+  }, [location.search]);
   const { mutate: fetchNotes } = useCreateInputOption({
     onSuccess: (data) => {
       if (data) {

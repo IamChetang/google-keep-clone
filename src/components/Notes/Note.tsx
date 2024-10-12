@@ -116,12 +116,6 @@ const Note = ({
     },
   });
 
-  // const handleAddLabel = () => {
-  //   if (newLabel.trim()) {
-  // setNewLabel("");
-  // setAnchorEl(null);
-  //   }
-  // };
   return (
     <NoteCard
       onMouseEnter={() => setShowActions(true)}

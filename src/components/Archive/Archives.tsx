@@ -6,10 +6,19 @@ import { Box, Typography, Container, Grid } from "@mui/material";
 import { ArchiveOutlined } from "@mui/icons-material";
 import { NoteType } from "../../type";
 import { useCreateInputOption } from "../../hooks/callingNotesFromfirebase";
+import { useLocation } from "react-router-dom";
 
 const Archives = () => {
   const [fetchedNotes, setFetchedNotes] = useState<NoteType[]>([]);
-
+  const location = useLocation();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const params: any = {};
+    for (let [key, value] of searchParams.entries()) {
+      params[key] = value;
+    }
+    fetchNotes({ collectionName: "archivedNotes", searchTerm: params.search });
+  }, [location.search]);
   const { mutate: fetchNotes } = useCreateInputOption({
     onSuccess: (data) => {
       if (data) {
