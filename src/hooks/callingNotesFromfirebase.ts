@@ -279,7 +279,6 @@ const changeBackGroundColor = async (payload: {
     );
     if (noteToArchive.exists()) {
       const noteData = noteToArchive.data();
-      console.log(noteData);
       await updateDoc(doc(db, payload.collectionName, payload.id), {
         ...noteData,
         background: payload.background,
@@ -300,6 +299,48 @@ export const useChangeBackGroundColor = (
 ) => {
   return useMutation({
     mutationFn: changeBackGroundColor,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+
+const addLabelToNotes = async (payload: {
+  id: string;
+  collectionName: string;
+  label: string;
+}) => {
+  try {
+    const noteToArchive = await getDoc(
+      doc(db, payload.collectionName, payload.id)
+    );
+    if (noteToArchive.exists()) {
+      const noteData = noteToArchive.data();
+      await updateDoc(doc(db, payload.collectionName, payload.id), {
+        ...noteData,
+        labels:
+          noteData.labels && noteData.labels.includes(payload.label)
+            ? noteData.labels // If the label already exists, do nothing
+            : [...(noteData.labels || []), payload.label], // Otherwise, add the new label
+      });
+    }
+    let q = collection(db, payload.collectionName);
+    let querySnapshot = await getDocs(q);
+    const fetchedNotes: NoteType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as NoteType[];
+    return fetchedNotes;
+  } catch (error) {}
+};
+
+export const useAddLabelToNotes = (
+  args: { onSuccess?: (data: NoteType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: addLabelToNotes,
     onSuccess: (data: any) => {
       if (args.onSuccess) {
         args.onSuccess(data);

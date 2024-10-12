@@ -12,18 +12,24 @@ import {
   Grid,
   Button,
   Box,
+  Chip,
+  Menu,
+  MenuItem,
+  TextField,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ArchiveOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import { NoteType } from "../../type";
 import {
+  useAddLabelToNotes,
   useChangeBackGroundColor,
   useMoveNoteArchive,
   useMoveNoteToDelete,
   useTogglePinNotes,
 } from "../../hooks/callingNotesFromfirebase";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
+import LabelIcon from "@mui/icons-material/Label";
 const NoteCard = styled(Card)`
   box-shadow: none;
   border: 1px solid #e0e0e0;
@@ -54,7 +60,8 @@ const Note = ({
   setFetchedNotes: (data: NoteType[]) => void;
 }) => {
   const [showActions, setShowActions] = useState(false);
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [newLabel, setNewLabel] = useState("");
   const [open, setOpen] = useState<any>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -72,6 +79,7 @@ const Note = ({
     "#E6C9A8",
     "#E8EAED",
   ];
+
   const { mutate: archiveNote } = useMoveNoteArchive({
     onSuccess: (data) => {
       if (data) {
@@ -100,6 +108,21 @@ const Note = ({
       }
     },
   });
+
+  const { mutate: handleAddLabel } = useAddLabelToNotes({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
+
+  // const handleAddLabel = () => {
+  //   if (newLabel.trim()) {
+  // setNewLabel("");
+  // setAnchorEl(null);
+  //   }
+  // };
   return (
     <NoteCard
       onMouseEnter={() => setShowActions(true)}
@@ -121,6 +144,19 @@ const Note = ({
       <CardContent sx={{ wordWrap: "break-word" }}>
         <Typography>{note.title}</Typography>
         <Typography>{note.text}</Typography>
+        {note?.labels ? (
+          <div style={{ marginTop: "0.5rem" }}>
+            {note.labels.map((label: string[], index: number) => (
+              <Chip
+                key={index}
+                label={label}
+                style={{ marginRight: "0.5rem" }}
+              />
+            ))}
+          </div>
+        ) : (
+          <></>
+        )}
       </CardContent>
       <CardActions
         sx={{ display: "flex", justifyContent: "end", marginLeft: "auto" }}
@@ -169,6 +205,14 @@ const Note = ({
             <DeleteOutlineOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
+        <Tooltip title="label">
+          <IconButton
+            sx={{ visibility: showActions ? "visible" : "hidden" }}
+            onClick={(event: any) => setAnchorEl(event.currentTarget)}
+          >
+            <LabelIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </CardActions>
       <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyle}>
@@ -206,6 +250,33 @@ const Note = ({
           </Grid>
         </Box>
       </Modal>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+      >
+        <MenuItem>
+          <TextField
+            value={newLabel}
+            onChange={(e) => setNewLabel(e.target.value)}
+            placeholder="Enter label"
+            variant="standard"
+          />
+          <IconButton
+            onClick={() => {
+              handleAddLabel({
+                id: note.id,
+                collectionName: "notes",
+                label: newLabel,
+              }),
+                setNewLabel(""),
+                setAnchorEl(null);
+            }}
+          >
+            <LabelIcon />
+          </IconButton>
+        </MenuItem>
+      </Menu>
     </NoteCard>
   );
 };

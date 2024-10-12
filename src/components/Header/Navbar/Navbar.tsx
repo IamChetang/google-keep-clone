@@ -99,10 +99,10 @@ const Header: React.FC<HeaderProps> = ({ handleDrawer, open }) => {
             navigate("/login"), logout();
           }}
         >
-          {/* <Avatar style={{ marginLeft: '12px',cursor:"pointer"}}></Avatar> */}
-          <h6 style={{ marginLeft: "12px", cursor: "pointer", color: "black" }}>
+          <Avatar style={{ marginLeft: "12px", cursor: "pointer" }}></Avatar>
+          {/* <h6 style={{ marginLeft: "12px", cursor: "pointer", color: "black" }}>
             Logout
-          </h6>
+          </h6> */}
         </Box>
       </Toolbar>
     </Navbar>

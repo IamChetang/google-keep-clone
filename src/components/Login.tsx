@@ -23,11 +23,6 @@ const Login = () => {
     await login(email, password);
     navigate("/");
   };
-  useEffect(() => {
-    checkAuthState();
-    navigate("/");
-  }, []);
-
   return (
     <>
       <Container maxWidth="xs">

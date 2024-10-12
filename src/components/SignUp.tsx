@@ -23,10 +23,6 @@ const SignUp = () => {
     await signUp(email, password);
     navigate("/");
   };
-  useEffect(() => {
-    checkAuthState();
-    navigate("/");
-  }, []);
 
   return (
     <>
