@@ -10,9 +10,6 @@ import {
 import { styled } from "@mui/material/styles";
 
 import { v4 as uuid } from "uuid";
-
-// import { DataContext } from '../../Context/DataProvider';
-import useStore from "../../store/googleStore";
 import { useAddNotes } from "../../hooks/callingNotesFromfirebase";
 import { NoteType } from "../../type";
 
