@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  Dialog,
-  DialogTitle,
   TextField,
   ListItemText,
   IconButton,
@@ -23,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { makeStyles } from "@mui/styles";
-import EditIcon from "@mui/icons-material/Edit";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   useAddLabels,

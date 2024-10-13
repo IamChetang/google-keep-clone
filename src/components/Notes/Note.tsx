@@ -21,7 +21,7 @@ import { styled } from "@mui/material/styles";
 import {
   ArchiveOutlined,
   DeleteOutlineOutlined,
-  Padding,
+ 
 } from "@mui/icons-material";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import { labelType, NoteType } from "../../type";
