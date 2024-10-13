@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Card,
@@ -15,14 +15,21 @@ import {
   Menu,
   MenuItem,
   TextField,
+  FormControlLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ArchiveOutlined, DeleteOutlineOutlined } from "@mui/icons-material";
+import {
+  ArchiveOutlined,
+  DeleteOutlineOutlined,
+  Padding,
+} from "@mui/icons-material";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
-import { NoteType } from "../../type";
+import { labelType, NoteType } from "../../type";
 import {
   useAddLabelToNotes,
+  useAddOrDeleteLabelToNotes,
   useChangeBackGroundColor,
+  useGetLabels,
   useMoveNoteArchive,
   useMoveNoteToDelete,
   useTogglePinNotes,
@@ -59,6 +66,7 @@ const Note = ({
   setFetchedNotes: (data: NoteType[]) => void;
 }) => {
   const [showActions, setShowActions] = useState(false);
+  const [getLabel, setGetLabel] = useState<labelType[]>([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [newLabel, setNewLabel] = useState("");
   const [open, setOpen] = useState<any>(false);
@@ -112,10 +120,37 @@ const Note = ({
     onSuccess: (data) => {
       if (data) {
         setFetchedNotes(data);
+        getLabels();
       }
     },
   });
+  const { mutate: getLabels } = useGetLabels({
+    onSuccess: (data) => {
+      if (data) {
+        setGetLabel(data);
+      }
+    },
+  });
+  const { mutate: addOrDeleteLabelToNotes } = useAddOrDeleteLabelToNotes({
+    onSuccess: (data) => {
+      if (data) {
+        setFetchedNotes(data);
+      }
+    },
+  });
+  const handleChange = (event: any) => {
+    console.log(event.target.checked);
 
+    addOrDeleteLabelToNotes({
+      id: note.id,
+      collectionName: "notes",
+      label: event.target.name,
+      action: event.target.checked,
+    });
+  };
+  useEffect(() => {
+    getLabels();
+  }, []);
   return (
     <NoteCard
       onMouseEnter={() => setShowActions(true)}
@@ -259,13 +294,36 @@ const Note = ({
                 collectionName: "notes",
                 label: newLabel,
               }),
-                setNewLabel(""),
-                setAnchorEl(null);
+                setNewLabel("");
             }}
           >
             <LabelIcon />
           </IconButton>
         </MenuItem>
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            marginTop: 1,
+          }}
+        >
+          {getLabel.map((value: any, index: React.Key | null | undefined) => (
+            <FormControlLabel
+              key={index}
+              control={
+                <Checkbox
+                  checked={note.labels?.some(
+                    (data: any) => value.label === data.label
+                  )}
+                  onChange={handleChange}
+                  name={value.label}
+                />
+              }
+              label={value.label}
+            />
+          ))}
+        </Box>
       </Menu>
     </NoteCard>
   );

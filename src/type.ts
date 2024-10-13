@@ -6,3 +6,4 @@ export type NoteType = {
   isPinned: boolean;
   background: string;
 };
+export type labelType = { label: string; id: string };

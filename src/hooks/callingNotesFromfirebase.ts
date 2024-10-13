@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useMutation } from "@tanstack/react-query";
-import { NoteType } from "../type";
+import { labelType, NoteType } from "../type";
 import { v4 as uuidv4 } from "uuid";
 const createInputOption = async (payload: {
   collectionName: string;
@@ -34,7 +34,7 @@ const createInputOption = async (payload: {
       id: doc.id,
       ...doc.data(),
     })) as NoteType[];
-    console.log(fetchedNotes);
+
     return fetchedNotes;
   } catch (error) {}
 };
@@ -176,7 +176,7 @@ const togglePinNotes = async (id: string) => {
     const noteToArchive = await getDoc(doc(db, "notes", id));
     if (noteToArchive.exists()) {
       const noteData = noteToArchive.data();
-      console.log(noteData);
+
       await updateDoc(doc(db, "notes", id), {
         ...noteData,
         isPinned: !noteData.isPinned,
@@ -370,9 +370,7 @@ const addLabelToNotes = async (payload: {
     })) as NoteType[];
 
     return fetchedNotes;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const useAddLabelToNotes = (
@@ -387,7 +385,7 @@ export const useAddLabelToNotes = (
     },
   });
 };
-type labelType = { label: string; id: string };
+
 const getLabels = async () => {
   try {
     let q = collection(db, "labels");
@@ -405,6 +403,157 @@ export const useGetLabels = (
 ) => {
   return useMutation({
     mutationFn: getLabels,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+
+// add labels
+
+const addLabels = async (newLabel: string) => {
+  try {
+    const id = uuidv4();
+    const label = { label: newLabel, id: id };
+    await setDoc(doc(db, "labels", id), label);
+
+    let q = collection(db, "labels");
+    let querySnapshot = await getDocs(q);
+    const fetchedLabels: labelType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as labelType[];
+    return fetchedLabels;
+  } catch (error) {}
+};
+
+export const useAddLabels = (
+  args: { onSuccess?: (data: labelType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: addLabels,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+
+const deleteLabels = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, "labels", id));
+    let q = collection(db, "labels");
+    let querySnapshot = await getDocs(q);
+    const fetchedLabels: labelType[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as labelType[];
+    return fetchedLabels;
+  } catch (error) {}
+};
+
+export const useDeleteLabels = (
+  args: { onSuccess?: (data: labelType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: deleteLabels,
+    onSuccess: (data: any) => {
+      if (args.onSuccess) {
+        args.onSuccess(data);
+      }
+    },
+  });
+};
+
+// remove or add labels
+
+const addOrDeleteLabelToNotes = async (payload: {
+  id: string;
+  collectionName: string;
+  label: string;
+  action: boolean;
+}) => {
+  try {
+    const id = uuidv4();
+    const labelObject = { id: id, label: payload.label };
+
+    const querySnapshotLabel = await getDocs(
+      query(collection(db, "labels"), where("label", "==", payload.label))
+    );
+
+    const fetchedLabels = querySnapshotLabel.docs.map((doc) => ({
+      id: doc.id,
+      label: doc.data().label,
+    }));
+
+    let labelToUse: any;
+
+    if (fetchedLabels.length > 0) {
+      // If a label already exists, use the existing label
+      labelToUse = fetchedLabels[0];
+    } else {
+      // If the label doesn't exist, create a new one
+      await setDoc(doc(db, "labels", id), labelObject);
+      const getLabel = await getDoc(doc(db, "labels", id));
+      labelToUse = getLabel.data(); // Use the newly created label
+    }
+
+    // Fetch the note to which the label should be added/removed
+    const noteToArchive = await getDoc(
+      doc(db, payload.collectionName, payload.id)
+    );
+
+    if (noteToArchive.exists()) {
+      const noteData = noteToArchive.data();
+
+      if (payload.action) {
+        // If action is true, add the label
+        // Check if the label is already associated with the note
+        if (
+          !noteData.labels.some(
+            (label: { label: any }) => label.label === labelToUse.label
+          )
+        ) {
+          await updateDoc(doc(db, payload.collectionName, payload.id), {
+            ...noteData,
+            labels: [...(noteData.labels || []), labelToUse], // Add the label
+          });
+        }
+      } else {
+        // If action is false, remove the label
+        const updatedLabels = noteData.labels.filter(
+          (label: { label: any }) => label.label !== labelToUse.label
+        );
+        await updateDoc(doc(db, payload.collectionName, payload.id), {
+          ...noteData,
+          labels: updatedLabels, // Update the labels to remove the specified label
+        });
+      }
+    }
+
+    // Fetch updated notes if needed
+    const q = collection(db, payload.collectionName);
+    const querySnapshot = await getDocs(q);
+    const fetchedNotes = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return fetchedNotes;
+  } catch (error) {
+    console.error("Error updating labels:", error);
+    throw error;
+  }
+};
+
+export const useAddOrDeleteLabelToNotes = (
+  args: { onSuccess?: (data: NoteType[]) => void } = {}
+) => {
+  return useMutation({
+    mutationFn: addOrDeleteLabelToNotes,
     onSuccess: (data: any) => {
       if (args.onSuccess) {
         args.onSuccess(data);

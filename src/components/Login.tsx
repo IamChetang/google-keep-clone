@@ -36,6 +36,7 @@ const Login = () => {
             </Box>
             <Box pl={2} pr={2} pt={10}>
               <TextField
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
@@ -45,6 +46,7 @@ const Login = () => {
             </Box>
             <Box p={2}>
               <TextField
+                required
                 fullWidth
                 label="Password"
                 type="password"

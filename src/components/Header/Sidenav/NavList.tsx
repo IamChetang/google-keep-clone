@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
+  Dialog,
+  DialogTitle,
+  TextField,
   ListItemText,
+  IconButton,
+  ListItemSecondaryAction,
+  Button,
+  Box,
+  Modal,
+  Typography,
 } from "@mui/material";
 import {
   LightbulbOutlined,
@@ -14,7 +23,14 @@ import {
 } from "@mui/icons-material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { makeStyles } from "@mui/styles";
-
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  useAddLabels,
+  useDeleteLabels,
+  useGetLabels,
+} from "../../../hooks/callingNotesFromfirebase";
+import { labelType } from "../../../type";
 const useStyles = makeStyles({
   sideBarActive: {
     backgroundColor: "#feefc3",
@@ -28,12 +44,16 @@ const useStyles = makeStyles({
     borderTopRightRadius: "50px",
   },
 });
-
-type NavProps = {
-  open: boolean;
-  setOpen: any;
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  backgroundColor: "white",
+  p: 3,
 };
-const NavList: React.FC<NavProps> = ({ open, setOpen }) => {
+const NavList = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
   const classes = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
@@ -71,10 +91,42 @@ const NavList: React.FC<NavProps> = ({ open, setOpen }) => {
   const handleDrawer = () => {
     setOpen(true);
   };
-  function handleModal() {
-    console.log("cdc");
-  }
 
+  const [labels, setLabels] = useState<labelType[]>([]);
+  const [newLabel, setNewLabel] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleAddLabel = () => {
+    if (newLabel.trim() !== "") {
+      addLabels(newLabel);
+      setNewLabel("");
+    }
+  };
+
+  const { mutate: getLabels } = useGetLabels({
+    onSuccess: (data) => {
+      if (data) {
+        setLabels(data);
+      }
+    },
+  });
+  const { mutate: addLabels } = useAddLabels({
+    onSuccess: (data) => {
+      if (data) {
+        setLabels(data);
+      }
+    },
+  });
+  const { mutate: deleteLabels } = useDeleteLabels({
+    onSuccess: (data) => {
+      if (data) {
+        setLabels(data);
+      }
+    },
+  });
+  useEffect(() => {
+    getLabels();
+  }, []);
   return (
     <List>
       {sidebarLinks.map(
@@ -93,7 +145,7 @@ const NavList: React.FC<NavProps> = ({ open, setOpen }) => {
               location.pathname === list.link ? classes.sideBarActive : ""
             }
             onClick={() => {
-              list.isModal ? handleModal() : navigate(list.link);
+              list.isModal ? setIsOpen(true) : navigate(list.link);
             }}
           >
             <ListItemButton
@@ -121,6 +173,34 @@ const NavList: React.FC<NavProps> = ({ open, setOpen }) => {
           </ListItem>
         )
       )}
+      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography>Edit Labels</Typography>
+          <TextField
+            label="Create new label"
+            value={newLabel}
+            onChange={(e) => setNewLabel(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <Button onClick={handleAddLabel} variant="contained" color="primary">
+            Save
+          </Button>
+          <List>
+            {labels?.map((label, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={label.label} />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" onClick={() => deleteLabels(label.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+          <Button onClick={() => setIsOpen(false)}>Done</Button>
+        </Box>
+      </Modal>
     </List>
   );
 };
